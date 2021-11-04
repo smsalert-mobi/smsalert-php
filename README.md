@@ -17,10 +17,10 @@ You can install **smsalert-phpp** via composer or by downloading the source.
 ### Via Composer:
 
 **smsalert-php** is available on Packagist as the
-[`smsalert/sdk`](https://packagist.org/packages/smsalert/sdk) package:
+[`axwell/smsalert-php`](axwell/smsalert-php) package:
 
 ```
-composer require smsalert/sdk
+composer require axwell/smsalert-php
 ```
 
 ## Quickstart
