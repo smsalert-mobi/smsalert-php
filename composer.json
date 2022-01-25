@@ -1,5 +1,5 @@
 {
-    "name": "axwell/smsalert-php",
+    "name": "smsalert-mobi/smsalert-php",
     "description": "PHP integration for SMSAlert.mobi API SMS Gateway",
     "type": "library",
     "require": {

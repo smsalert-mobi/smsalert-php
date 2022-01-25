@@ -17,10 +17,10 @@ You can install **smsalert-phpp** via composer or by downloading the source.
 ### Via Composer:
 
 **smsalert-php** is available on Packagist as the
-[`axwell/smsalert-php`](axwell/smsalert-php) package:
+[`smsalert-mobi/smsalert-php`](smsalert-mobi/smsalert-php) package:
 
 ```
-composer require axwell/smsalert-php
+composer require smsalert-mobi/smsalert-php
 ```
 
 ## Quickstart
@@ -45,4 +45,4 @@ If you need help installing or using the library, you can contact us at contact@
 If you've instead found a bug in the library or would like new features added, go ahead and open issues or pull requests against this repo!
 
 [apidocs]: https://smsalert.mobi/apidocs
-[libdocs]: https://github.com/axwell/smsalert-php
+[libdocs]: https://github.com/smsalert-mobi/smsalert-php
