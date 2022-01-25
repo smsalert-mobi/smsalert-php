@@ -45,17 +45,20 @@ class SmsClient
      * @param string $tel
      * @param string $message
      * @param bool   $cleanupUtf8
+     * @param bool   $autoShortUrl
      *
+     * @return mixed
+     * @throws GuzzleException
      * @throws InvalidCredentials
      * @throws InvalidParameters
-     * @throws GuzzleException
      */
-    public function sendSms(string $tel, string $message, bool $cleanupUtf8 = false)
+    public function sendSms(string $tel, string $message, bool $cleanupUtf8 = false, bool $autoShortUrl = false)
     {
         $response = $this->request(self::SEND_SMS, [
-            'tel'         => $tel,
-            'message'     => $message,
-            'cleanupUtf8' => $cleanupUtf8,
+            'tel'          => $tel,
+            'message'      => $message,
+            'cleanupUtf8'  => $cleanupUtf8,
+            'autoShortUrl' => $autoShortUrl,
         ]);
 
         return $response['id'];
