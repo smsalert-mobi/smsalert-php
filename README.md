@@ -33,7 +33,7 @@ composer require smsalert-mobi/smsalert-php
 $username = "demo"; // Your account username
 $apiKey = "api_key_here"; // Your account apiKey from https://smsalert.mobi/settings
 
-$client = new SmsAlert\SmsClient\SmsClient($username, $apiKey);
+$client = new SmsAlert\SmsClient($username, $apiKey);
 $messageId = $client->sendSms('0720762291', 'test api');
 
 echo $messageId;
