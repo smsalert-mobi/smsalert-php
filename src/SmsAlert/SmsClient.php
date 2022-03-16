@@ -6,6 +6,7 @@ use DateTime;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
+use SmsAlert\Dto\MessageList;
 use SmsAlert\Exception\InvalidCredentials;
 use SmsAlert\Exception\InvalidDate;
 use SmsAlert\Exception\InvalidParameters;
@@ -21,6 +22,8 @@ class SmsClient
     protected const SEND_SMS = 'send';
 
     protected const SEND_BULK_SMS = 'sendBulk';
+
+    protected const SEND_BULK_CUSTOM_SMS = 'sendBulkCustomSms';
 
     protected const SCHEDULE_SMS = 'schedule';
 
@@ -72,13 +75,45 @@ class SmsClient
      * @throws GuzzleException
      * @throws InvalidCredentials
      * @throws InvalidParameters
+     * @throws InvalidDate
      */
-    public function sendBulkSms(PhoneList $phoneList, string $message): ?array
+    public function sendBulkSms(PhoneList $phoneList, string $message, ?string $date = null): ?array
     {
-        $response = $this->request(self::SEND_BULK_SMS, [
+        $data = [
             'tel'         => $phoneList->getCombinedList(),
             'message'     => $message
-        ]);
+        ];
+
+        if (!empty($date) && !$this->validateDate($date)) {
+            throw new InvalidDate('Date format should be Y-m-d H:i:s');
+        }  else {
+            $data['schedule'] = $date;
+        }
+
+        $response = $this->request(self::SEND_BULK_SMS, $data);
+
+        return $response['ids'];
+    }
+
+    /**
+     * @throws InvalidCredentials
+     * @throws InvalidDate
+     * @throws InvalidParameters
+     * @throws GuzzleException
+     */
+    public function sendCustomBulkSMs(MessageList $messageList, ?string $date = null): ?array
+    {
+        $data = [
+            'messageList' => $messageList->__toString(),
+        ];
+
+        if (!empty($date) && !$this->validateDate($date)) {
+            throw new InvalidDate('Date format should be Y-m-d H:i:s');
+        }  else {
+            $data['schedule'] = $date;
+        }
+
+        $response = $this->request(self::SEND_BULK_CUSTOM_SMS, $data);
 
         return $response['ids'];
     }
