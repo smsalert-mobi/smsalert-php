@@ -45,43 +45,46 @@ class SmsClient
     }
 
     /**
-     * @param string $tel
-     * @param string $message
-     * @param bool   $cleanupUtf8
-     * @param bool   $autoShortUrl
+     * @param  string  $tel
+     * @param  string  $message
+     * @param  bool  $cleanupUtf8
+     * @param  bool  $autoShortUrl
+     * @param  string  $modemId
      *
      * @return mixed
      * @throws GuzzleException
      * @throws InvalidCredentials
      * @throws InvalidParameters
      */
-    public function sendSms(string $tel, string $message, bool $cleanupUtf8 = false, bool $autoShortUrl = false)
+    public function sendSms(string $tel, string $message, bool $cleanupUtf8 = false, bool $autoShortUrl = false, ?string $modemId = null)
     {
         $response = $this->request(self::SEND_SMS, [
             'tel'          => $tel,
             'message'      => $message,
             'cleanupUtf8'  => $cleanupUtf8,
             'autoShortUrl' => $autoShortUrl,
+            'modemId'      => $modemId,
         ]);
 
         return $response['id'];
     }
 
     /**
-     * @param PhoneList $phoneList
-     * @param string    $message
+     * @param  PhoneList  $phoneList
+     * @param  string  $message
+     * @param  string|null  $date
      *
      * @return array|null
      * @throws GuzzleException
      * @throws InvalidCredentials
-     * @throws InvalidParameters
      * @throws InvalidDate
+     * @throws InvalidParameters
      */
     public function sendBulkSms(PhoneList $phoneList, string $message, ?string $date = null): ?array
     {
         $data = [
             'tel'         => $phoneList->getCombinedList(),
-            'message'     => $message
+            'message'     => $message,
         ];
 
         if (!empty($date) && !$this->validateDate($date)) {
@@ -119,9 +122,10 @@ class SmsClient
     }
 
     /**
-     * @param string $tel
-     * @param string $message
-     * @param string $date
+     * @param  string  $tel
+     * @param  string  $message
+     * @param  string  $date
+     * @param  string|null  $modemId
      *
      * @return mixed
      * @throws GuzzleException
@@ -129,7 +133,7 @@ class SmsClient
      * @throws InvalidDate
      * @throws InvalidParameters
      */
-    public function scheduleSms(string $tel, string $message, string $date)
+    public function scheduleSms(string $tel, string $message, string $date, ?string $modemId = null)
     {
         if (!$this->validateDate($date)) {
             throw new InvalidDate('Date format should be Y-m-d H:i:s');
@@ -139,14 +143,15 @@ class SmsClient
             'tel'         => $tel,
             'message'     => $message,
             'schedule'    => $date,
+            'modemId'     => $modemId,
         ]);
 
         return $response['id'];
     }
 
     /**
-     * @param        $date
-     * @param string $format
+     * @param  string  $date
+     * @param  string  $format
      *
      * @return bool
      */
