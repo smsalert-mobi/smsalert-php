@@ -44,5 +44,5 @@ echo $messageId;
 If you need help installing or using the library, you can contact us at contact@smsalert.mobi
 If you've instead found a bug in the library or would like new features added, go ahead and open issues or pull requests against this repo!
 
-[apidocs]: https://smsalert.mobi/apidocs
+[apidocs]: https://smsalert.mobi/apidocs/
 [libdocs]: https://github.com/smsalert-mobi/smsalert-php
