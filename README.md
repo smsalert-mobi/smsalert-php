@@ -8,7 +8,7 @@ The PHP library documentation can be found [here][libdocs].
 
 This library supports the following PHP implementations:
 
-* PHP 7.4
+* PHP 7.4 | ^8.0
 
 ## Installation
 
