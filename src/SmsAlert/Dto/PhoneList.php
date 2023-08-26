@@ -19,11 +19,8 @@ class PhoneList
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCombinedList(): string
+    public function getPhoneList(): array
     {
-        return implode(',', $this->list);
+        return $this->list;
     }
 }

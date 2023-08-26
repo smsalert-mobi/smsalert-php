@@ -11,24 +11,27 @@ use SmsAlert\Exception\InvalidCredentials;
 use SmsAlert\Exception\InvalidDate;
 use SmsAlert\Exception\InvalidParameters;
 use SmsAlert\Dto\PhoneList;
+use SmsAlert\Response\GetSmsStatusResponse;
+use SmsAlert\Response\ScheduleSmsResponse;
+use SmsAlert\Response\SendBulkSmsResponse;
+use SmsAlert\Response\SendSmsResponse;
 
 class SmsClient
 {
 
     protected const API_URL = 'https://smsalert.mobi';
 
-    protected const API_VERSION = '/api/sms/';
+    protected const API_VERSION = '/api/v2/';
 
-    protected const SEND_SMS = 'send';
+    protected const SEND_SMS = 'message/send';
 
-    protected const SEND_BULK_SMS = 'sendBulk';
+    protected const SEND_BULK_SMS = 'message/bulk';
+
+    protected const SCHEDULE_SMS = 'message/schedule';
+
+    protected const CHECK_SMS_STATUS = 'message/getStatus';
 
     protected const SEND_BULK_CUSTOM_SMS = 'sendBulkCustomSms';
-
-    protected const SCHEDULE_SMS = 'schedule';
-
-    protected const CHECK_SMS_STATUS = 'checkStatus';
-
 
     private string $username;
 
@@ -45,45 +48,54 @@ class SmsClient
     }
 
     /**
-     * @param  string  $tel
-     * @param  string  $message
-     * @param  bool  $cleanupUtf8
-     * @param  bool  $autoShortUrl
-     * @param  string  $modemId
-     *
-     * @return mixed
+     * @param string $phoneNumber
+     * @param string $message
+     * @param bool $cleanupUtf8
+     * @param bool $autoShortUrl
+     * @param string|null $modemId
+     * @return SendSmsResponse
      * @throws GuzzleException
      * @throws InvalidCredentials
      * @throws InvalidParameters
      */
-    public function sendSms(string $tel, string $message, bool $cleanupUtf8 = false, bool $autoShortUrl = false, ?string $modemId = null)
+    public function sendSms(
+        string $phoneNumber,
+        string $message,
+        bool $cleanupUtf8 = true,
+        bool $autoShortUrl = false,
+        ?string $modemId = null
+    ): SendSmsResponse
     {
         $response = $this->request(self::SEND_SMS, [
-            'tel'          => $tel,
+            'phoneNumber'  => $phoneNumber,
             'message'      => $message,
             'cleanupUtf8'  => $cleanupUtf8,
             'autoShortUrl' => $autoShortUrl,
             'modemId'      => $modemId,
         ]);
 
-        return $response['id'];
+        $responseEntity = new SendSmsResponse();
+        $responseEntity->setSmsCount($response['smsCount']);
+        $responseEntity->setId($response['id']);
+        $responseEntity->setStatus($response['status']);
+
+        return $responseEntity;
     }
 
     /**
-     * @param  PhoneList  $phoneList
-     * @param  string  $message
-     * @param  string|null  $date
-     *
-     * @return array|null
+     * @param PhoneList $phoneList
+     * @param string $message
+     * @param string|null $date
+     * @return SendBulkSmsResponse
      * @throws GuzzleException
      * @throws InvalidCredentials
      * @throws InvalidDate
      * @throws InvalidParameters
      */
-    public function sendBulkSms(PhoneList $phoneList, string $message, ?string $date = null): ?array
+    public function sendBulkSms(PhoneList $phoneList, string $message, ?string $date = null): SendBulkSmsResponse
     {
         $data = [
-            'tel'         => $phoneList->getCombinedList(),
+            'phoneList'   => $phoneList->getPhoneList(),
             'message'     => $message,
         ];
 
@@ -95,14 +107,21 @@ class SmsClient
 
         $response = $this->request(self::SEND_BULK_SMS, $data);
 
-        return $response['ids'];
+        $responseEntity = new SendBulkSmsResponse();
+        $responseEntity->setStatus($response['status']);
+        $responseEntity->setCampaignId($response['campaignId']);
+
+        return $responseEntity;
     }
 
     /**
+     * @param MessageList $messageList
+     * @param string|null $date
+     * @return array|null
+     * @throws GuzzleException
      * @throws InvalidCredentials
      * @throws InvalidDate
      * @throws InvalidParameters
-     * @throws GuzzleException
      */
     public function sendCustomBulkSMs(MessageList $messageList, ?string $date = null): ?array
     {
@@ -122,76 +141,84 @@ class SmsClient
     }
 
     /**
-     * @param  string  $tel
-     * @param  string  $message
-     * @param  string  $date
-     * @param  string|null  $modemId
-     *
-     * @return mixed
+     * @param string $tel
+     * @param string $message
+     * @param string $date
+     * @param string|null $modemId
+     * @return ScheduleSmsResponse
      * @throws GuzzleException
      * @throws InvalidCredentials
      * @throws InvalidDate
      * @throws InvalidParameters
      */
-    public function scheduleSms(string $tel, string $message, string $date, ?string $modemId = null)
+    public function scheduleSms(string $tel, string $message, string $date, ?string $modemId = null): ScheduleSmsResponse
     {
         if (!$this->validateDate($date)) {
             throw new InvalidDate('Date format should be Y-m-d H:i:s');
         }
 
         $response = $this->request(self::SCHEDULE_SMS, [
-            'tel'         => $tel,
-            'message'     => $message,
-            'schedule'    => $date,
-            'modemId'     => $modemId,
+            'phoneNumber'  => $tel,
+            'message'      => $message,
+            'scheduleDate' => $date,
+            'modemId'      => $modemId,
         ]);
 
-        return $response['id'];
+        $responseEntity = new ScheduleSmsResponse();
+        $responseEntity->setSmsCount($response['smsCount']);
+        $responseEntity->setId($response['id']);
+        $responseEntity->setStatus($response['status']);
+
+        return $responseEntity;
     }
 
     /**
-     * @param  string  $date
-     * @param  string  $format
-     *
-     * @return bool
-     */
-    private function validateDate(string $date, string $format = 'Y-m-d H:i:s'): bool
-    {
-        $dateTime = DateTime::createFromFormat($format, $date);
-        return $dateTime && $dateTime->format($format) == $date;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return string
+     * @param string $id
+     * @return GetSmsStatusResponse
      * @throws GuzzleException
      * @throws InvalidCredentials
      * @throws InvalidParameters
      */
-    public function checkSmsStatus(int $id): string
+    public function checkSmsStatus(string $id): GetSmsStatusResponse
     {
         $response = $this->request(self::CHECK_SMS_STATUS, [
             'id' => $id,
         ]);
 
-        return $response['status'];
+        $responseEntity = new GetSmsStatusResponse();
+        $responseEntity->setId($response['id']);
+        $responseEntity->setModemId($response['modemId']);
+        $responseEntity->setStatus($response['status']);
+        $responseEntity->setReason($response['reason'] ?? '');
+
+        return $responseEntity;
+    }
+
+    /**
+     * @param  string  $date
+     *
+     * @return bool
+     */
+    private function validateDate(string $date): bool
+    {
+        $dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $date);
+        return $dateTime && $dateTime->format('Y-m-d H:i:s') == $date;
     }
 
     /**
      * @param string $uri
-     * @param        $params
-     *
-     * @return bool
+     * @param $params
+     * @return array|null
+     * @throws GuzzleException
      * @throws InvalidCredentials
      * @throws InvalidParameters
-     * @throws GuzzleException
      */
     private function request(string $uri, $params): ?array
     {
         $client = new Client(
             [
-                'base_uri' => self::API_URL
+                'base_uri' => self::API_URL,
+                 'auth'    => [$this->username, $this->apiKey],
             ]
         );
 
@@ -200,28 +227,19 @@ class SmsClient
                 'POST',
                 self::API_VERSION . $uri,
                 [
-                    'form_params' => array_merge(
-                        [
-                            'username' => $this->username,
-                            'apiKey'   => $this->apiKey,
-                        ],
-                        $params
-                    )
+                    'json' => $params
                 ]
             );
-
             $response = $request->getBody()->getContents();
             return json_decode($response, true);
         } catch (ClientException $e) {
-            $error =  json_decode($e->getResponse()->getBody(), true);
-            switch ($error['errorCode']) {
-                case 100:
-                    throw new InvalidCredentials();
-                case 101:
-                    throw new InvalidParameters($error['message']);
-            }
-        }
 
-        return false;
+            if ($e->getCode() == 401) {
+                throw new InvalidCredentials();
+            }
+
+            $error =  json_decode($e->getResponse()->getBody(), true);
+            throw new InvalidParameters($error['message']);
+        }
     }
 }
