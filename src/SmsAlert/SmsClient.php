@@ -52,6 +52,7 @@ class SmsClient
      * @param string $message
      * @param bool $cleanupUtf8
      * @param bool $autoShortUrl
+     * @param bool $onlySmsModems
      * @param string|null $modemId
      * @return SendSmsResponse
      * @throws GuzzleException
@@ -63,15 +64,17 @@ class SmsClient
         string $message,
         bool $cleanupUtf8 = true,
         bool $autoShortUrl = false,
+        bool $onlySmsModems = false,
         ?string $modemId = null
     ): SendSmsResponse
     {
         $response = $this->request(self::SEND_SMS, [
-            'phoneNumber'  => $phoneNumber,
-            'message'      => $message,
-            'cleanupUtf8'  => $cleanupUtf8,
-            'autoShortUrl' => $autoShortUrl,
-            'modemId'      => $modemId,
+            'phoneNumber'   => $phoneNumber,
+            'message'       => $message,
+            'cleanupUtf8'   => $cleanupUtf8,
+            'autoShortUrl'  => $autoShortUrl,
+            'onlySmsModems' => $onlySmsModems,
+            'modemId'       => $modemId,
         ]);
 
         $responseEntity = new SendSmsResponse();
