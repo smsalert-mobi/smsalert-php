@@ -1,8 +1,8 @@
 <?php
 
-namespace SmsAlert\Response;
+namespace SmsAlert\Response\Message;
 
-class GetSmsStatusResponse
+class GetMessageStatusResponse
 {
     protected string $id;
 
@@ -22,9 +22,9 @@ class GetSmsStatusResponse
 
     /**
      * @param string $id
-     * @return GetSmsStatusResponse
+     * @return GetMessageStatusResponse
      */
-    public function setId(string $id): GetSmsStatusResponse
+    public function setId(string $id): GetMessageStatusResponse
     {
         $this->id = $id;
         return $this;
@@ -40,9 +40,9 @@ class GetSmsStatusResponse
 
     /**
      * @param string $modemId
-     * @return GetSmsStatusResponse
+     * @return GetMessageStatusResponse
      */
-    public function setModemId(string $modemId): GetSmsStatusResponse
+    public function setModemId(string $modemId): GetMessageStatusResponse
     {
         $this->modemId = $modemId;
         return $this;
@@ -58,9 +58,9 @@ class GetSmsStatusResponse
 
     /**
      * @param string $status
-     * @return GetSmsStatusResponse
+     * @return GetMessageStatusResponse
      */
-    public function setStatus(string $status): GetSmsStatusResponse
+    public function setStatus(string $status): GetMessageStatusResponse
     {
         $this->status = $status;
         return $this;
@@ -76,9 +76,9 @@ class GetSmsStatusResponse
 
     /**
      * @param string $reason
-     * @return GetSmsStatusResponse
+     * @return GetMessageStatusResponse
      */
-    public function setReason(string $reason): GetSmsStatusResponse
+    public function setReason(string $reason): GetMessageStatusResponse
     {
         $this->reason = $reason;
         return $this;

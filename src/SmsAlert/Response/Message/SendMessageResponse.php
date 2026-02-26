@@ -1,8 +1,8 @@
 <?php
 
-namespace SmsAlert\Response;
+namespace SmsAlert\Response\Message;
 
-class SendSmsResponse
+class SendMessageResponse
 {
     protected string $id;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace SmsAlert\Dto;
+namespace SmsAlert\Dto\Message;
 
 class PhoneList
 {

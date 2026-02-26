@@ -1,8 +1,8 @@
 <?php
 
-namespace SmsAlert\Response;
+namespace SmsAlert\Response\Message;
 
-class SendBulkSmsResponse
+class SendBulkMessageResponse
 {
 
     protected bool $status;
@@ -19,9 +19,9 @@ class SendBulkSmsResponse
 
     /**
      * @param bool $status
-     * @return SendBulkSmsResponse
+     * @return SendBulkMessageResponse
      */
-    public function setStatus(bool $status): SendBulkSmsResponse
+    public function setStatus(bool $status): SendBulkMessageResponse
     {
         $this->status = $status;
         return $this;
@@ -37,9 +37,9 @@ class SendBulkSmsResponse
 
     /**
      * @param int $campaignId
-     * @return SendBulkSmsResponse
+     * @return SendBulkMessageResponse
      */
-    public function setCampaignId(int $campaignId): SendBulkSmsResponse
+    public function setCampaignId(int $campaignId): SendBulkMessageResponse
     {
         $this->campaignId = $campaignId;
         return $this;
