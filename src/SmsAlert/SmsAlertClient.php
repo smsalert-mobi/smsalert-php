@@ -73,7 +73,8 @@ class SmsAlertClient implements SmsAlertClientInterface
         bool $cleanupUtf8 = true,
         bool $autoShortUrl = false,
         bool $onlySmsModems = false,
-        ?string $modemId = null
+        ?string $modemId = null,
+        ?array $components = null
     ): SendMessageResponse
     {
         $response = $this->request(self::SEND_SMS, [
@@ -83,6 +84,7 @@ class SmsAlertClient implements SmsAlertClientInterface
             'autoShortUrl'  => $autoShortUrl,
             'onlySmsModems' => $onlySmsModems,
             'modemId'       => $modemId,
+            'components'    => $components
         ]);
 
         $responseEntity = new SendMessageResponse();
